@@ -24,6 +24,10 @@ ok, is there any other way to run a python script besides pyhton3? i dont curren
 
 ook, can you edit the start_app.bat to work that way then? also, every time you touch the project, you can update the log.md to input past prompts
 
-<prompt>
 ok, cool, you may apply the changes... im not sure how you function yet, do i gotta change the 'ask' to 'edit'?
-</prompt>
+
+grüße, can you see the project? #codebase
+
+ook, nice, so you can see it all right? can you gimme a quick summary of the whole project? #codebase 
+
+baie o python ultima versão, vou precisar colocar a senha de administrador

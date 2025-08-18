@@ -1,0 +1,161 @@
+this is a school project, a library manager
+
+copilot must:
+in addition to an answer to the answer to the user's prompt update the  file 'library-manager/log.md' with absolutely every prompt from the user every interaction, the plain text from the prompt input in the file separated by a new line
+
+the instructions according to the teacher are:
+
+1) Objective
+Build a complete, individual mini-web system using:
+• Front-end: HTML5, CSS3 (Flex/Grid), JavaScript (ES6+, no framework).
+• Back-end/API: Python (FastAPI or Flask), SQLite via SQLAlchemy (or
+sqlite3).
+• Tools: VS Code, Copilot, Git/GitHub, Thunder Client/Insomnia.
+• Deliverable: Public repository on GitHub + technical report.
+You must choose one of the three systems below (Library, Product Sales,
+School) and follow the specifications for both the front-end and back-end. Copilot can generate parts
+of the code, but you must review it, request adjustments, understand it, and document what
+was done.
+
+2) Technical Standard (for everyone)
+• Folder Structure
+• /frontend
+• index.html
+• styles.css
+• scripts.js
+• /backend
+• app.py (FastAPI/Flask)
+• models.py
+
+• database.py
+• seed.py
+• requirements.txt
+• README.md
+• REPORT.md
+• API: RESTful, returning JSON, status codes (200, 201, 400, 404, 422, 500).
+• SQLite: app.db in the /backend folder.
+• Seed: script to insert ~20 plausible records into the main table.
+• Accessibility: aria-label, visible focus, minimum contrast 4.5:1, keyboard navigation.
+• Manual Testing: Thunder Client/Insomnia collection or .http file in the
+repo.
+• GitHub: public repository dw2-<yourname>-<theme>, frequent commits, tag v1.0.0.
+
+3) Front-end Systems and Specifications
+3.1 Library (Catalog and Loans)
+Visual Identity (Colors and Typography)
+• Primary: #1E3A8A (Navy Blue)
+• Secondary: #F59E0B (Amber)
+• Accent: #10B981 (Green)
+• Background: #F8FAFC (Very Light Gray)
+• Main Text: #0F172A
+• Suggested Font: "Inter" or "Roboto" (fallback sans-serif)
+Layout
+• Fixed header with "School Library" logo/title + search bar.
+• Left-hand sidebar with filters (Genre, Year, Status).
+• Main area with:
+o Book List Card (Cover, Title, Author, Year, Status).
+
+o "New Book" Modal.
+o "Loan/Return" Modal.
+
+Pages/Sections
+1. Catalog (home): book list, search by title/author.
+2. Manage: registration/edit form.
+3. Reports (front): export CSV/JSON of the filtered list.
+Book Form (front)
+• Fields: title* (text, 3–90 chars), author* (text), year* (number 1900–current
+year), genre (select), ISBN (optional text), status* (select: “available”,
+“borrowed”).
+• Front-end validations: required, size limits, year range, prevent duplicate title
+in the local array before the call.
+JS Interactions
+• CRUD via fetch in the API.
+• Combined filter (genre + year + text).
+• Sorting by title/year with persistence in localStorage.
+• Pagination (10 per page) or infinite scroll.
+• • Accessibility: keyboard shortcuts to open the "New Book" modal (e.g., Alt+N),
+managed focus.
+Business rule (front + back)
+• Prevent borrowing if status = borrowed.
+• When borrowing, record the borrow_date (UTC); when returning, clear and set
+status = available. 
+
+4) Backend Specifications (for all three)
+Use FastAPI + SQLAlchemy + SQLite (or Flask + sqlite3/SQLAlchemy). Minimum
+entities and endpoints:
+Library
+• Book entity: id, title, author, year, genre, ISBN?, status,
+loan_date?
+• Endpoints
+o GET /books?search=&genre=&year=&status=
+o POST /books (validations)
+o PUT /books/{id}
+o DELETE /books/{id}
+o POST /books/{id}/loan (validates status; sets date)
+o POST /books/{id}/return (validates status; clears date)
+
+Product Sales
+• Product Entity: ID, name, description, price, stock, category, SKU?
+• Order Entity (optional simplified): ID, final_total, date
+• Endpoints
+o GET /products?search=&category=&sort=
+o POST /products
+o PUT /products/{id}
+o DELETE /products/{id}
+o POST /cart/confirm (body with items; validates stock; applies
+coupon "STUDENT10"; reduces stock; creates order)
+
+School
+• Class Entity: ID, name, capacity
+• Student Entity: ID, name, date of birth, email?, status, class_id? • Endpoints
+o GET /students?search=&class_id=&status=
+
+o POST /students
+o PUT /students/{id}
+o DELETE /students/{id}
+o GET /classes
+o POST /classes
+o POST /registrations (body: student_id, class_id → validates capacity;
+arrow student.status=active, student.class_id)
+
+General Rules
+• Consistent validations on the backend (mirroring those on the frontend).
+• Responses with clear error messages.
+• Plausible data seeds (20 records).
+
+5) Mandatory Features (3 of 10)
+Implement any of the 3 (valid for any system):
+1. True accessibility (tabindex, aria, focus; describe in the report).
+2. Custom validations on the front and back (e.g., age group, inventory, year rules).
+3. Advanced filtering (multiple criteria) without reloading.
+4. Persistent sorting (localStorage).
+5. Pagination or infinite scrolling.
+6. CSV/JSON export of the current list.
+7. Seed script with plausible data.
+8. API testing (Insomnia/ThunderClient collection or .http).
+9. Error handling with toasts/visual feedback + HTTP codes.
+10. Light/dark theme with persistence.
+
+6) Execution Roadmap (four meetings)
+Day 1: Create repo, backend base (FastAPI + SQLite + /health), frontend base (layout, header, list, modals), initial commit.
+
+Day 2: Main CRUD + 1 quirk, API tests, commits.
+Day 3: Filters/sorting, accessibility, more quirks, REPORT.md in progress.
+Day 4: Seed, refinement, prints/gifs, final README/REPORT, v1.0.0 tag.
+
+7) Git/GitHub (required)
+• Public repository: dw2-<yourname>-<theme>.
+• Small and frequent commits (clear messages).
+• Include: code, seed, API collection, README, REPORT, screenshots/gifs.
+• Create release v1.0.0.
+
+8) Technical Report (REPORT.md)
+Include:
+• Architecture (simple diagram + req→API→ORM→SQLite→response flow).
+• Technologies and versions (Python, FastAPI/Flask, SQLAlchemy, SQLite, JS libs, VSCode extensions; cite what Copilot suggested).
+• Copilot prompts (minimum 6), with accepted/edited snippets and why.
+• Implemented features (which ones and how).
+• Validations: front-end and back-end examples.
+• Accessibility: what was implemented.
+• How to implement it (step-by-step + successful screenshots).
+• Limitations and future improvements.
