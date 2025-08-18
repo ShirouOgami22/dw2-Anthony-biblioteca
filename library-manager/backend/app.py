@@ -1,11 +1,8 @@
 from flask import Flask, jsonify, request
-from database import init_db, get_books, add_book, update_book, delete_book
+from database import initialize_db, get_books, add_book, update_book, delete_book
 
 app = Flask(__name__)
-
-@app.before_first_request
-def initialize_database():
-    init_db()
+initialize_db()
 
 @app.route('/api/books', methods=['GET'])
 def get_all_books():

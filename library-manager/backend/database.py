@@ -1,7 +1,10 @@
 import sqlite3
 
 def connect_db():
-    conn = sqlite3.connect('data/library.db')
+    import os
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, '..', 'data', 'library.db')
+    conn = sqlite3.connect(db_path)
     return conn
 
 def initialize_db():

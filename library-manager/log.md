@@ -28,6 +28,39 @@ ok, cool, you may apply the changes... im not sure how you function yet, do i go
 
 grüße, can you see the project? #codebase
 
-ook, nice, so you can see it all right? can you gimme a quick summary of the whole project? #codebase 
 
-baie o python ultima versão, vou precisar colocar a senha de administrador
+aaand now this
+
+Traceback (most recent call last):
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\app.py", line 5, in <module>
+		initialize_db()
+		~~~~~~~~~~~~~^^
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\database.py", line 8, in initialize_db
+		conn = connect_db()
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\database.py", line 4, in connect_db
+		conn = sqlite3.connect('data/library.db')
+sqlite3.OperationalError: unable to open database file
+Traceback (most recent call last):
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\app.py", line 5, in <module>
+		initialize_db()
+		~~~~~~~~~~~~~^^
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\database.py", line 8, in initialize_db
+		conn = connect_db()
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\database.py", line 4, in connect_db
+		conn = sqlite3.connect('data/library.db')
+sqlite3.OperationalError: unable to open database file
+Press any key to continue . . .
+
+now got this
+
+Traceback (most recent call last):
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\app.py", line 6, in <module>
+		@app.before_first_request
+		 ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Flask' object has no attribute 'before_first_request'. Did you mean: 'before_request'?
+Traceback (most recent call last):
+	File "C:\Users\anthony_guerra\Downloads\aiProject\library-manager\backend\app.py", line 6, in <module>
+		@app.before_first_request
+		 ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Flask' object has no attribute 'before_first_request'. Did you mean: 'before_request'?
+Press any key to continue . . .
