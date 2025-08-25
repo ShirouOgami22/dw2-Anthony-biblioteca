@@ -3,7 +3,10 @@ import sqlite3
 def connect_db():
     import os
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(base_dir, '..', 'data', 'library.db')
+    data_dir = os.path.join(base_dir, '..', 'data')
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+    db_path = os.path.join(data_dir, 'library.db')
     conn = sqlite3.connect(db_path)
     return conn
 

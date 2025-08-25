@@ -1,7 +1,7 @@
 this is a school project, a library manager
 
 copilot must:
-in addition to an answer to the answer to the user's prompt update the  file 'library-manager/log.md' with absolutely every prompt from the user every interaction, the plain text from the prompt input in the file separated by a new line
+in addition to an answer to the answer to the user's prompt append the file 'library-manager/log.md' with absolutely every prompt from the user every interaction, the plain text from the prompt input in the file separated by a new line
 
 the instructions according to the teacher are:
 
