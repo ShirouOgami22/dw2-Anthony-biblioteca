@@ -1,44 +1,114 @@
-from flask import Flask, jsonify, request
-from database import initialize_db, get_books, add_book, update_book, delete_book, get_book
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+import models
+import database
+from fastapi.responses import JSONResponse
+from datetime import datetime
+from typing import List, Optional
 
-app = Flask(__name__)
-initialize_db()
+app = FastAPI()
 
-@app.route('/')
-def home():
-    return jsonify({"message": "Library Manager API is running"})
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.route('/api/books', methods=['GET'])
-def get_all_books():
-    books = get_books()
-    # Convert to list of dicts for JSON
-    books_list = [
-        {
-            'id': b[0],
-            'title': b[1],
-            'publication_year': b[2],
-            'author': b[3],
-            'genre': b[4]
-        } for b in books
-    ]
-    return jsonify(books_list)
+db = database.SessionLocal
 
-@app.route('/api/books', methods=['POST'])
-def create_book():
-    data = request.json
-    add_book(data['title'], data['publication_year'], data['author'], data['genre'])
-    return jsonify({'message': 'Book added successfully'}), 201
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
-@app.route('/api/books/<int:book_id>', methods=['PUT'])
-def edit_book(book_id):
-    data = request.json
-    update_book(book_id, data['title'], data['publication_year'], data['author'], data['genre'])
-    return jsonify({'message': 'Book updated successfully'})
+@app.get("/livros")
+def get_livros(search: Optional[str] = None, genero: Optional[str] = None, ano: Optional[int] = None, status: Optional[str] = None):
+    session = db()
+    query = session.query(models.Livro)
+    if search:
+        query = query.filter((models.Livro.titulo.ilike(f"%{search}%")) | (models.Livro.autor.ilike(f"%{search}%")))
+    if genero:
+        query = query.filter(models.Livro.genero == genero)
+    if ano:
+        query = query.filter(models.Livro.ano == ano)
+    if status:
+        query = query.filter(models.Livro.status == status)
+    livros = query.all()
+    session.close()
+    return [livro.to_dict() for livro in livros]
 
-@app.route('/api/books/<int:book_id>', methods=['DELETE'])
-def remove_book(book_id):
-    delete_book(book_id)
-    return jsonify({'message': 'Book deleted successfully'})
+@app.post("/livros")
+def create_livro(livro: models.LivroCreate):
+    session = db()
+    # Check for duplicate title
+    if session.query(models.Livro).filter(models.Livro.titulo == livro.titulo).first():
+        session.close()
+        raise HTTPException(status_code=400, detail="Duplicate title")
+    new_livro = models.Livro(**livro.dict())
+    session.add(new_livro)
+    session.commit()
+    session.refresh(new_livro)
+    session.close()
+    return new_livro.to_dict()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.put("/livros/{id}")
+def update_livro(id: int, livro: models.LivroCreate):
+    session = db()
+    db_livro = session.query(models.Livro).get(id)
+    if not db_livro:
+        session.close()
+        raise HTTPException(status_code=404, detail="Book not found")
+    for key, value in livro.dict().items():
+        setattr(db_livro, key, value)
+    session.commit()
+    session.refresh(db_livro)
+    session.close()
+    return db_livro.to_dict()
+
+@app.delete("/livros/{id}")
+def delete_livro(id: int):
+    session = db()
+    db_livro = session.query(models.Livro).get(id)
+    if not db_livro:
+        session.close()
+        raise HTTPException(status_code=404, detail="Book not found")
+    session.delete(db_livro)
+    session.commit()
+    session.close()
+    return {"ok": True}
+
+@app.post("/livros/{id}/emprestar")
+def emprestar_livro(id: int):
+    session = db()
+    db_livro = session.query(models.Livro).get(id)
+    if not db_livro:
+        session.close()
+        raise HTTPException(status_code=404, detail="Book not found")
+    if db_livro.status == "emprestado":
+        session.close()
+        raise HTTPException(status_code=400, detail="Book already loaned")
+    db_livro.status = "emprestado"
+    db_livro.data_emprestimo = datetime.utcnow()
+    session.commit()
+    session.refresh(db_livro)
+    session.close()
+    return db_livro.to_dict()
+
+@app.post("/livros/{id}/devolver")
+def devolver_livro(id: int):
+    session = db()
+    db_livro = session.query(models.Livro).get(id)
+    if not db_livro:
+        session.close()
+        raise HTTPException(status_code=404, detail="Book not found")
+    if db_livro.status != "emprestado":
+        session.close()
+        raise HTTPException(status_code=400, detail="Book is not loaned")
+    db_livro.status = "disponível"
+    db_livro.data_emprestimo = None
+    session.commit()
+    session.refresh(db_livro)
+    session.close()
+    return db_livro.to_dict()

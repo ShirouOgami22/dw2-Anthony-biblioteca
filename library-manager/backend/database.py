@@ -1,70 +1,13 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Base
 
-def connect_db():
-    import os
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.join(base_dir, '..', 'data')
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
-    db_path = os.path.join(data_dir, 'library.db')
-    conn = sqlite3.connect(db_path)
-    return conn
+SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
 
-def initialize_db():
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS books (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            publication_year INTEGER NOT NULL,
-            author TEXT NOT NULL,
-            genre TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def add_book(title, publication_year, author, genre):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO books (title, publication_year, author, genre)
-        VALUES (?, ?, ?, ?)
-    ''', (title, publication_year, author, genre))
-    conn.commit()
-    conn.close()
-
-def get_books():
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM books')
-    books = cursor.fetchall()
-    conn.close()
-    return books
-
-def get_book(book_id):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM books WHERE id = ?', (book_id,))
-    book = cursor.fetchone()
-    conn.close()
-    return book
-
-def update_book(book_id, title, publication_year, author, genre):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        UPDATE books
-        SET title = ?, publication_year = ?, author = ?, genre = ?
-        WHERE id = ?
-    ''', (title, publication_year, author, genre, book_id))
-    conn.commit()
-    conn.close()
-
-def delete_book(book_id):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM books WHERE id = ?', (book_id,))
-    conn.commit()
-    conn.close()
+# Create tables
+Base.metadata.create_all(bind=engine)
