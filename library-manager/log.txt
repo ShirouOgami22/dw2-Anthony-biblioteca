@@ -1,1 +1,0 @@
-can you build this project for me? i was thinking of a .bat file to start the application, instead of trying to run the .py raw
